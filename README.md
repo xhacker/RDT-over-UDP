@@ -3,6 +3,8 @@
 A simple implementation of RDT (Reliable Data Transfer) 3.0.  
 You need to run in correct order: interceptor, receiver, then sender.
 
+<img src="screenshot.png" width="1022">
+
 ## Interceptor
 25% of packets will be dropped. Another 25% of packets will be corrupted by randomly changing one byte. You can change the percentage by editing **intercepter.py**.
 ```bash
