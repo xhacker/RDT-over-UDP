@@ -36,10 +36,10 @@ def corrupt(pkt):
 
 def intercept(pkt, outSock, addr):
     rand = random.randint(1, 20)
-    # if rand == 1:
-    #     print "Dropped"
-    #     return
-    if rand >= 2 and rand <= 10:
+    if rand >= 1 and rand <= 5:
+        print "Dropped"
+        return
+    if rand >= 6 and rand <= 10:
         pkt = corrupt(pkt)
         print "Corrupted to:", pkt
     randSleep()
