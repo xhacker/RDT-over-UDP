@@ -37,6 +37,8 @@ if __name__ == "__main__":
 
             message, address = recv_sock.recvfrom(4096)
             print message
-            if message == "ACK":
+            checksum = message[:2]
+            ack_seq = message[5]
+            if ip_checksum(message[2:]) == checksum and ack_seq == str(seq):
                 ack_received = True
         seq = 1 - seq

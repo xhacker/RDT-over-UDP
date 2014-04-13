@@ -3,6 +3,10 @@ from sys import argv, stdout
 from common import ip_checksum
 
 
+def send(content, to):
+    checksum = ip_checksum(content)
+    send_sock.sendto(checksum + content, to)
+
 if __name__ == "__main__":
     dest_addr = argv[1]
     dest_port = int(argv[2])
@@ -26,9 +30,10 @@ if __name__ == "__main__":
         content = message[3:]
 
         if ip_checksum(content) == checksum:
-            send_sock.sendto("ACK", dest)
+            send("ACK" + seq, dest)
             if seq == str(expecting_seq):
                 stdout.write(content)
                 expecting_seq = 1 - expecting_seq
         else:
-            send_sock.sendto("NAK", dest)
+            negative_seq = str(1 - expecting_seq)
+            send("ACK" + negative_seq, dest)
