@@ -24,6 +24,6 @@ if __name__ == "__main__":
 
         if ip_checksum(content) == checksum:
             send_sock.sendto("ACK", dest)
-            print content
+            print content,
         else:
             send_sock.sendto("NAK", dest)

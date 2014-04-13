@@ -2,6 +2,7 @@ from socket import socket, AF_INET, SOCK_DGRAM
 from sys import argv
 from common import ip_checksum
 
+SEGMENT_SIZE = 200
 
 if __name__ == "__main__":
     dest_addr = argv[1]
@@ -10,19 +11,30 @@ if __name__ == "__main__":
     listen_addr = argv[3]
     listen_port = int(argv[4])
     listen = (listen_addr, listen_port)
-    content = argv[5]
+    filename = argv[5]
+
+    with open(filename) as f:
+        content = f.read()
 
     send_sock = socket(AF_INET, SOCK_DGRAM)
     recv_sock = socket(AF_INET, SOCK_DGRAM)
 
     recv_sock.bind(listen)
 
-    ack_received = False
+    offset = 0
 
-    while not ack_received:
-        send_sock.sendto(ip_checksum(content) + content, dest)
+    while offset < len(content):
+        if offset + SEGMENT_SIZE > len(content):
+            segment = content[offset:]
+        else:
+            segment = content[offset:offset + SEGMENT_SIZE]
+        offset += SEGMENT_SIZE
 
-        message, address = recv_sock.recvfrom(4096)
-        print message
-        if message == "ACK":
-            ack_received = True
+        ack_received = False
+        while not ack_received:
+            send_sock.sendto(ip_checksum(segment) + segment, dest)
+
+            message, address = recv_sock.recvfrom(4096)
+            print message
+            if message == "ACK":
+                ack_received = True
