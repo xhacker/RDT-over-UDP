@@ -22,6 +22,7 @@ if __name__ == "__main__":
     recv_sock.bind(listen)
 
     offset = 0
+    seq = 0
 
     while offset < len(content):
         if offset + SEGMENT_SIZE > len(content):
@@ -32,9 +33,10 @@ if __name__ == "__main__":
 
         ack_received = False
         while not ack_received:
-            send_sock.sendto(ip_checksum(segment) + segment, dest)
+            send_sock.sendto(ip_checksum(segment) + str(seq) + segment, dest)
 
             message, address = recv_sock.recvfrom(4096)
             print message
             if message == "ACK":
                 ack_received = True
+        seq = 1 - seq
