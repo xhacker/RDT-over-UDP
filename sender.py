@@ -1,7 +1,7 @@
 from socket import socket, AF_INET, SOCK_DGRAM
 from sys import argv
+from common import ip_checksum
 
-socket
 
 if __name__ == "__main__":
     dest_addr = argv[1]
@@ -17,8 +17,12 @@ if __name__ == "__main__":
 
     recv_sock.bind(listen)
 
-    send_sock.sendto(content, dest)
+    ack_received = False
 
-    while True:
+    while not ack_received:
+        send_sock.sendto(ip_checksum(content) + content, dest)
+
         message, address = recv_sock.recvfrom(4096)
         print message
+        if message == "ACK":
+            ack_received = True
